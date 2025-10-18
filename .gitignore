@@ -1,7 +1,6 @@
 # Bundler cache
 .bundle
 vendor
-Gemfile
 Gemfile.lock
 
 # Jekyll cache
@@ -31,3 +30,4 @@ assets/js/dist
 .DS_Store
 .nojekyll
 .editorconfig
+_posts/YYYY*
