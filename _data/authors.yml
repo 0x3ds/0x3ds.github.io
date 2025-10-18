@@ -1,0 +1,12 @@
+## Template › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/advanced-usage.md#setting-author-url
+# -------------------------------------
+# {author_id}:
+#   name: {full name}
+#   github: {github_of_author}
+#   url: {homepage_of_author}
+# -------------------------------------
+
+0x3ds:
+  name: 0x3ds
+  github: 0x3ds
+  url: https://github.com/0x3ds/
