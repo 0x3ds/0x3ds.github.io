@@ -2,7 +2,7 @@
 title: "HTB - Horizontall"
 author: [0x3ds]
 date: 2025-10-21 01:00:00 +1000
-description: "Horizontall is an easy difficulty Linux machine were only HTTP and SSH services are exposed. Enumeration of the website reveals that it is built using the Vue JS framework. Reviewing the source code of the Javascript file, a new virtual host is discovered. This host contains the Strapi Headless CMS which is vulnerable to two CVEs allowing potential attackers to gain remote code execution on the system as the strapi user. Then, after enumerating services listening only on localhost on the remote machine, a Laravel instance is discovered. In order to access the port that Laravel is listening on, SSH tunnelling is used. The Laravel framework installed is outdated and running on debug mode. Another CVE can be exploited to gain remote code execution through Laravel as root."
+description: "Horizontall is an easy difficulty Linux machine where only HTTP and SSH services are exposed. Enumeration of the website reveals that it is built using the Vue JS framework. Reviewing the source code of the Javascript file, a new virtual host is discovered. This host contains the Strapi Headless CMS which is vulnerable to two CVEs allowing potential attackers to gain remote code execution on the system as the strapi user. Then, after enumerating services listening only on localhost on the remote machine, a Laravel instance is discovered. In order to access the port that Laravel is listening on, SSH tunnelling is used. The Laravel framework installed is outdated and running on debug mode. Another CVE can be exploited to gain remote code execution through Laravel as root."
 categories: [Hack The Box, Machines - Linux]
 tags: [htb-blue, blue, hackthebox, machine, ctf, linux, easy, nmap, gobuster, ffuf, source-code, vhosts, strapi, cve-2019-18818, cve-2019-19609, CVE-2021-3129, command-injection, burp, burp-repeater, laravel, phpggc, deserialization]
 image:
@@ -41,7 +41,7 @@ We can see that we have discovered two open TCP ports:
 - TCP Port 22 - SSH
 - TCP Port 80 - HTTP
 
-We can see in the output that we have a domain name - http://horizontall.htb - we can add this to our host files.
+We can see in the output that we have a domain name - http://horizontall.htb - we can add this to our `/etc/hosts` file.
 
 ```zsh
 0x3ds@kali $ echo "10.129.235.221  horizontall.htb" | sudo tee -a /etc/hosts
@@ -125,7 +125,7 @@ api-prod                [Status: 200, Size: 413, Words: 76, Lines: 20, Duration:
 ```
 
 
-We can see in the output that we have a domain name - http://horizontall.htb - we can add this to our host files.
+We can see in the output that we have discovered a subdomain - http://api-prod.horizontall.htb - we can add this to our `/etc/hosts` files.
 
 ```zsh
 0x3ds@kali $ echo "10.129.235.221 api-prod.horizontall.htb" | sudo tee -a /etc/hosts
@@ -133,7 +133,7 @@ We can see in the output that we have a domain name - http://horizontall.htb - w
 10.129.235.221 api-prod.horizontall.htb
 ```
 
-e can now navigate to the website at http://horizontall.htb/:
+We can now navigate to the website at http://horizontall.htb/:
 
 ![light mode only](/assets/img/posts/htb/machines/linux/easy/horizontall/horizontall_2.png){: .light .w-75 .shadow .rounded-10 w='1212' h='668' }
 ![dark mode only](/assets/img/posts/htb/machines/linux/easy/horizontall/horizontall_2.png){: .dark .w-75 .shadow .rounded-10 w='1212' h='668' }
@@ -368,7 +368,7 @@ When enumerating if there are any services that are only accessibly locally, we 
 - Node on TCP/1337
 - Something on TCP/8000 -> Investigate.
 
-To find our what is on TCP/8000, we can try to interact with it via our reverse shell to see if we need to perform additional actions.
+To find out what is on TCP/8000, we can try to interact with it via our reverse shell to see if we need to perform additional actions.
 
 ```zsh
 strapi@horizontall:~/myapi$ curl -I http://127.0.0.1:8000
@@ -475,7 +475,7 @@ Shellcodes: No Results
 Papers: No Results
 ```
 
-We are able to see that there is a exploit listed in the results for version 8.4.2: `Laravel 8.4.2 debug mode - Remote code execution`. 
+We are able to see that there is an exploit listed in the results for version 8.4.2: `Laravel 8.4.2 debug mode - Remote code execution`. 
 
 We can read the first few lines of the exploit file `49424.py` to see if there is any further information that may assist us with identifying if this exploit would be applicable with the version of Laravel we are up against.
 
@@ -537,7 +537,7 @@ And *voila*, we are able to execute commands on the target host as the `root` us
 ---
 ### Post Exploitation
 
-We can use this to put our public key contents from our SSH key pair we generated earlier into the `authorized_keys` file within the `.ssh/` directory of the root user. This would allows us to then access the target host as the root user via SSH.
+We can use this to put our public key contents from our SSH key pair we generated earlier into the `authorized_keys` file within the `.ssh/` directory of the root user. This would allow us to then access the target host as the root user via SSH.
 
 First, we need to copy the contents from our `key.pub` file we generated earlier and prepare our command.
 
@@ -600,7 +600,7 @@ total 16
 We can attempt to read the contents of the file to obtain the flag
 
 ```zsh
-0x3ds@kali $ cat root.txt
+root@horizontall:~# cat root.txt
 
 c691a***************************
 ```
