@@ -4,7 +4,7 @@ author: [0x3ds]
 date: 2025-10-21 01:00:00 +1000
 description: "Horizontall is an easy difficulty Linux machine where only HTTP and SSH services are exposed. Enumeration of the website reveals that it is built using the Vue JS framework. Reviewing the source code of the Javascript file, a new virtual host is discovered. This host contains the Strapi Headless CMS which is vulnerable to two CVEs allowing potential attackers to gain remote code execution on the system as the strapi user. Then, after enumerating services listening only on localhost on the remote machine, a Laravel instance is discovered. In order to access the port that Laravel is listening on, SSH tunnelling is used. The Laravel framework installed is outdated and running on debug mode. Another CVE can be exploited to gain remote code execution through Laravel as root."
 categories: [Hack The Box, Machines - Linux]
-tags: [htb-blue, blue, hackthebox, machine, ctf, linux, easy, nmap, gobuster, ffuf, source-code, vhosts, strapi, cve-2019-18818, cve-2019-19609, CVE-2021-3129, command-injection, burp, burp-repeater, laravel, phpggc, deserialization]
+tags: [htb-horizontall, horizontall, hackthebox, machine, ctf, linux, easy, nmap, gobuster, ffuf, source-code, vhosts, strapi, cve-2019-18818, cve-2019-19609, CVE-2021-3129, command-injection, burp, burp-repeater, laravel, phpggc, deserialization]
 image:
   path: /assets/img/posts/htb/machines/linux/easy/horizontall/horizontall_infocard.png
 cover: /assets/img/posts/htb/machines/linux/easy/horizontall/horizontall_infocard.png

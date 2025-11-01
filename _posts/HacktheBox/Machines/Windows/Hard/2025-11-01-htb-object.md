@@ -4,7 +4,7 @@ author: [0x3ds]
 date: 2025-11-01 12:00:00 +1000
 description: "Object is a hard Windows machine running Jenkins automation server. The automation server is found to have registration enabled and the registered user can create builds. Builds can be triggered remotely by configuring an api token. Foothold is obtained by decrypting the Jenkins secrets. The foothold user is found to have ForceChangePassword permissions on another user called smith. This privilege abuse allows us to gain access to smith. smith has GenericWrite permissions on maria. Abusing this privilege allows us to gain access to the server as this user. maria has WriteOwner permissions on Domain Admins group, whose privileges we exploit to get a SYSTEM shell."
 categories: [Hack The Box, Machines - Windows]
-tags: [htb-blue, blue, hackthebox, machine, ctf, windows, easy, nmap, iis, gobuster, ffuf, wfuzz, jenkins, cicd, firewall, windows-firewall, jenkins-credential-decryptor, pwn-jenkins, evil-winrm, crackmapexec, bloodhound, sharphound, active-directory, github, forcechangepassword, genericwrite, writeowner, logon-script, powerview, scheduled-task, powershell]
+tags: [htb-object, object, hackthebox, machine, ctf, windows, hard, nmap, iis, gobuster, ffuf, wfuzz, jenkins, cicd, firewall, windows-firewall, jenkins-credential-decryptor, pwn-jenkins, evil-winrm, crackmapexec, bloodhound, sharphound, active-directory, github, forcechangepassword, genericwrite, writeowner, logon-script, powerview, scheduled-task, powershell]
 image:
   path: /assets/img/posts/htb/machines/windows/hard/object/object_infocard.png
 cover: /assets/img/posts/htb/machines/windows/hard/object/object_infocard.png
