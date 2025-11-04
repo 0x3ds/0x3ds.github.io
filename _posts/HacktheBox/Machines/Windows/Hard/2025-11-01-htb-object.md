@@ -114,7 +114,7 @@ As such, we will select the `Trigger builds remotely` option.
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_7.png){: .light .w-100 .shadow .rounded-10 w='1212' h='668' }
 ![dark mode only](/assets/img/posts/htb/machines/windows/hard/object/object_7.png){: .dark .w-100 .shadow .rounded-10 w='1212' h='668' }
 
-We can see that it requires an authentication token to be function. 
+We can see that it requires an authentication token to be set in order for the `Trigger build remotely` option to be function and work correctly. Since we can set it to anything we want, we will pick the name `ShadowAuthToken` and set the authentication token as that.
 
 
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_10.png){: .light .w-100 .shadow .rounded-10 w='1212' h='668' }
@@ -145,13 +145,13 @@ We can now see that our job was successfully created.
 
 Our next steps are to try to build and trigger the job which should then attempt to execute the command we set on the target machine that is hosting the Jenkins instance.
 
-Since we selected `Trigger builds remotely`, we can attempt to trigger the build by accessing a special predefined URL. However, it took some research online to try and find the predefined URL and how to authenticate. Thankfully, the jenkins documentation online has a page called [**Authenticating scripted clients**](https://www.jenkins.io/doc/book/system-administration/authenticating-scripted-clients/) which outlined how to do this. 
+Since we selected `Trigger builds remotely`, we can attempt to trigger the build by accessing a special predefined URL. However, it took some research online to try and find the predefined URL and how to authenticate. Thankfully, the Jenkins documentation online has a page called [**Authenticating scripted clients**](https://www.jenkins.io/doc/book/system-administration/authenticating-scripted-clients/) which outlined how to do this. 
 
 
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_14.png){: .light .w-100 .shadow .rounded-10 w='1212' h='668' }
 ![dark mode only](/assets/img/posts/htb/machines/windows/hard/object/object_14.png){: .dark .w-100 .shadow .rounded-10 w='1212' h='668' }
 
-Since we need to create an `apiToken` to authenticate when using `curl`, we will need to create token to use. We can attempt to generate a new token for our account by navigating to the `configure` section of our user account. 
+However, we can see from the documentation that we need to create an `apiToken` to authenticate when using `curl`, we will need to create token to use. We can attempt to generate a new token for our account by navigating to the `configure` section of our user account. 
 
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_8.png){: .light .w-50 .shadow .rounded-10 w='1212' h='668' }
 ![dark mode only](/assets/img/posts/htb/machines/windows/hard/object/object_8.png){: .dark .w-50 .shadow .rounded-10 w='1212' h='668' }
@@ -176,7 +176,7 @@ Note that we needed to slightly modify the instructions provided in the Jenkins 
 ```
 
 
-We can now return to jenkins in our browser and refresh our project page to see that the job was triggered and the build was successful!
+We can now return to Jenkins in our browser and refresh our project page to see that the job was triggered and the build was successful!
 
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_15.png){: .light .w-100 .shadow .rounded-10 w='1212' h='668' }
 ![dark mode only](/assets/img/posts/htb/machines/windows/hard/object/object_15.png){: .dark .w-100 .shadow .rounded-10 w='1212' h='668' }
@@ -241,7 +241,9 @@ The format for our commands will remain the same, with the base64 string changin
 ---
 ### Exploitation
 
-First, we need to create the directory that we are going to store our files in. To do this, we will use the following command:\
+First, we need to create the directory that we are going to store our files in. To do this, we need to return to the configuration page of our job `shadownedya` by selecting `configuration` from the left-hand side panel on the job’s home page. Then, we scroll down and modify the `whoami /all` command to our new command. 
+
+We will use the following command:\
 `mkdir %TEMP%\resource.temp`
 
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_19.png){: .light .w-50 .shadow .rounded-10 w='1212' h='668' }
@@ -465,7 +467,7 @@ We can see that we have successfully escalated our privileges from the user `oli
 
 We can utilise the escalate privileges to create a new account and add it to the Administrator group.
 
-First we can create our new user called `shadows` using the following command:\
+First, we can create our new user called `shadows` using the following command:\
 `cmd.exe /c powershell -NoProfile -ExecutionPolicy Bypass -Command "%TEMP%\resource.temp\efspot.exe 'net user shadows Shad0wsRUS1! /add'"`
 
 ![light mode only](/assets/img/posts/htb/machines/windows/hard/object/object_37.png){: .light .w-100 .shadow .rounded-10 w='1212' h='668' }
@@ -548,7 +550,7 @@ Mode                LastWriteTime         Length Name
 We can attempt to read the contents of the file and obtain the flag:
 
 ```zsh
-*Evil-WinRM* PS C:\Users\shadows\Documents> cat C:\Users\oliver\Desktop\user.txt
+*Evil-WinRM* PS C:\Users> cat C:\Users\oliver\Desktop\user.txt
 
 4958f***************************
 ```
@@ -578,7 +580,7 @@ Mode                LastWriteTime         Length Name
 We can attempt to read the contents of the file and obtain the flag:
 
 ```zsh
-*Evil-WinRM* PS C:\Users\shadows\Documents> cat C:\Users\Administrator\Desktop\root.txt
+*Evil-WinRM* PS C:\Users> cat C:\Users\Administrator\Desktop\root.txt
 
 2f930***************************
 ```
